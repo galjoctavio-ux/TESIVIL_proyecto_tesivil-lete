@@ -1,0 +1,40 @@
+
+# --- Python ---
+# Ignorar los entornos virtuales (vimos 'env' y 'venv_lete')
+/env/
+/venv_lete/
+
+# Ignorar la caché de Python
+__pycache__/
+*.pyc
+
+# --- Node.js ---
+# Ignorar todas las carpetas de dependencias
+node_modules/
+
+# Archivos de build y salida
+dist/
+build/
+.next/
+
+# --- Logs ---
+# Ignorar TODOS los archivos .log (¡vimos muchísimos!)
+*.log
+
+
+# --- Archivos de Datos y Salida ---
+# Ignorar archivos CSV (como mediciones.csv)
+# Si 'mediciones.csv' es un EJEMPLO que SÍ quieres subir, borra esta línea.
+*.csv
+
+# --- Secretos y Entorno ---
+# ¡NUNCA SUBIR ESTOS ARCHIVOS!
+*.env
+*.env.local
+secrets.h
+
+# --- Archivos de SO y Editor ---
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
