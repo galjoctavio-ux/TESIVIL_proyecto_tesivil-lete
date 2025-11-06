@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
+import { LoadScript, Autocomplete } from '@react-google-maps/api';
 import api from '../apiService';
+
+const libraries = ['places'];
 
 const formStyle = {
   display: 'flex',
@@ -13,6 +16,19 @@ function CrearCasoForm({ onClose, onCasoCreado }) {
   const [telefono, setTelefono] = useState('');
   const [comentarios, setComentarios] = useState('');
   const [error, setError] = useState(null);
+  const [autocomplete, setAutocomplete] = useState(null);
+
+  const onLoad = (autocompleteInstance) => {
+    setAutocomplete(autocompleteInstance);
+  };
+
+  const onPlaceChanged = () => {
+    if (autocomplete !== null) {
+      setDireccion(autocomplete.getPlace().formatted_address);
+    } else {
+      console.log('Autocomplete is not loaded yet!');
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -25,9 +41,8 @@ function CrearCasoForm({ onClose, onCasoCreado }) {
         comentarios_iniciales: comentarios,
       });
 
-      // ¡Éxito!
-      onCasoCreado(); // Llama a la función para refrescar la lista
-      onClose();      // Cierra el modal
+      onCasoCreado();
+      onClose();
     } catch (err) {
       setError('Error al crear el caso.');
       console.error(err);
@@ -35,27 +50,40 @@ function CrearCasoForm({ onClose, onCasoCreado }) {
   };
 
   return (
-    <form style={formStyle} onSubmit={handleSubmit}>
-      <h3>Crear Nuevo Caso</h3>
-      <div>
-        <label>Nombre del Cliente:</label>
-        <input type="text" value={nombre} onChange={(e) => setNombre(e.target.value)} required />
-      </div>
-      <div>
-        <label>Dirección:</label>
-        <input type="text" value={direccion} onChange={(e) => setDireccion(e.target.value)} required />
-      </div>
-      <div>
-        <label>Teléfono:</label>
-        <input type="text" value={telefono} onChange={(e) => setTelefono(e.target.value)} />
-      </div>
-      <div>
-        <label>Comentarios Iniciales:</label>
-        <textarea value={comentarios} onChange={(e) => setComentarios(e.target.value)} />
-      </div>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-      <button type="submit">Guardar Caso</button>
-    </form>
+    <LoadScript
+      googleMapsApiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY}
+      libraries={libraries}
+    >
+      <form style={formStyle} onSubmit={handleSubmit}>
+        <h3>Crear Nuevo Caso</h3>
+        <div>
+          <label>Nombre del Cliente:</label>
+          <input type="text" value={nombre} onChange={(e) => setNombre(e.target.value)} required />
+        </div>
+        <div>
+          <label>Dirección:</label>
+          <Autocomplete onLoad={onLoad} onPlaceChanged={onPlaceChanged}>
+            <input
+              type="text"
+              value={direccion}
+              onChange={(e) => setDireccion(e.target.value)}
+              placeholder="Escribe una dirección"
+              required
+            />
+          </Autocomplete>
+        </div>
+        <div>
+          <label>Teléfono:</label>
+          <input type="text" value={telefono} onChange={(e) => setTelefono(e.target.value)} />
+        </div>
+        <div>
+          <label>Comentarios Iniciales:</label>
+          <textarea value={comentarios} onChange={(e) => setComentarios(e.target.value)} />
+        </div>
+        {error && <p style={{ color: 'red' }}>{error}</p>}
+        <button type="submit">Guardar Caso</button>
+      </form>
+    </LoadScript>
   );
 }
 
