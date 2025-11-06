@@ -130,11 +130,7 @@ const getHtmlPlantilla = () => {
         <div class="section">
           <h2>Causas de su Alto Consumo</h2>
           <ul>
-            <li>Fugas de corriente en la instalación eléctrica.</li>
-            <li>Uso excesivo de electrodomésticos de alto consumo.</li>
-            <li>Equipos en mal estado que consumen más de lo normal.</li>
-            <li>Malas prácticas, como dejar luces y aparatos encendidos innecesariamente.</li>
-            <li>Fallas en otras instalaciones.</li>
+            {{causas_alto_consumo}}
           </ul>
         </div>
         <div class="signature">
@@ -179,13 +175,23 @@ export const generarPDF = async (datos) => {
       .slice(0, 5);
 
     top5.forEach(eq => {
-      const nombre = eq.nombre_personalizado || eq.nombre_equipo;
-      top5Html += `<li>${nombre} (${eq.ubicacion}) - ${eq.kwh_bimestre_calculado.toFixed(2)} kWh/bimestre</li>`;
+      const ubicacion = eq.nombre_personalizado ? `(${eq.nombre_personalizado})` : '';
+      top5Html += `<li>${eq.nombre_equipo} ${ubicacion} - ${eq.kwh_bimestre_calculado.toFixed(2)} kWh/bimestre</li>`;
     });
   } else {
     top5Html = '<li>No se registraron equipos.</li>';
   }
   html = html.replace('{{top_5_consumidores}}', top5Html);
+
+  let causasHtml = '';
+  if (datos.revision.causas_alto_consumo && datos.revision.causas_alto_consumo.length > 0) {
+    datos.revision.causas_alto_consumo.forEach(causa => {
+      causasHtml += `<li>${causa}</li>`;
+    });
+  } else {
+    causasHtml = '<li>No se especificaron causas.</li>';
+  }
+  html = html.replace('{{causas_alto_consumo}}', causasHtml);
 
   const browser = await puppeteer.launch({
     args: ['--no-sandbox', '--disable-setuid-sandbox']

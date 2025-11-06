@@ -18,7 +18,7 @@ const tdStyle = {
   padding: '8px',
 };
 
-function CasosList({ onDatosActualizados }) { // 1. Recibir 'onDatosActualizados'
+function CasosList({ onDatosActualizados, onAgendarClick }) { // 1. Recibir 'onDatosActualizados'
   const [casos, setCasos] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -83,6 +83,12 @@ function CasosList({ onDatosActualizados }) { // 1. Recibir 'onDatosActualizados
                     disabled={caso.status === 'completado'}
                   >
                     Asignar
+                  </button>
+                  <button
+                    onClick={() => onAgendarClick(caso)}
+                    disabled={!caso.tecnico_id}
+                  >
+                    Agendar
                   </button>
                 </td>
               </tr>

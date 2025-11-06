@@ -82,6 +82,18 @@ function RevisionForm() {
     setFormData(prev => ({ ...prev, equiposData: prev.equiposData.filter(eq => eq.id !== id) }));
   };
 
+  const handleCausasChange = (e) => {
+    const { value, checked } = e.target;
+    setFormData(prev => {
+      const causas = prev.causas_alto_consumo;
+      if (checked) {
+        return { ...prev, causas_alto_consumo: [...causas, value] };
+      } else {
+        return { ...prev, causas_alto_consumo: causas.filter(c => c !== value) };
+      }
+    });
+  };
+
   const clearSignature = () => {
     sigPadRef.current.clear();
   };
@@ -303,6 +315,14 @@ function RevisionForm() {
 {currentStep === 6 && (
           <div>
             <h3>Paso 6: Cierre y Firma</h3>
+            <div style={inputGroupStyle}>
+              <label style={labelStyle}>Causas de su Alto Consumo (Marcar las que apliquen)</label>
+              <div><input type="checkbox" value="Fugas de corriente en la instalación eléctrica." onChange={handleCausasChange} /> Fugas de corriente.</div>
+              <div><input type="checkbox" value="Uso excesivo de electrodomésticos de alto consumo." onChange={handleCausasChange} /> Uso excesivo de electrodomésticos.</div>
+              <div><input type="checkbox" value="Equipos en mal estado que consumen más de lo normal." onChange={handleCausasChange} /> Equipos en mal estado.</div>
+              <div><input type="checkbox" value="Malas prácticas, como dejar luces y aparatos encendidos innecesariamente." onChange={handleCausasChange} /> Malas prácticas de uso.</div>
+              <div><input type="checkbox" value="Fallas en otras instalaciones." onChange={handleCausasChange} /> Fallas en otras instalaciones.</div>
+            </div>
             <div style={inputGroupStyle}>
               <label style={labelStyle} htmlFor="recomendaciones_tecnico">Recomendaciones Clave</label>
               <textarea name="recomendaciones_tecnico" id="recomendaciones_tecnico" value={formData.recomendaciones_tecnico} onChange={handleChange} rows="4" />
