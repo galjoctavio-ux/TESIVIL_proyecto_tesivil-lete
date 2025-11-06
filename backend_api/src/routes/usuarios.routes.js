@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { requireAuth, isAdmin } from '../middleware/auth.middleware.js';
-import { getTecnicos, createTecnico } from '../controllers/usuarios.controller.js';
+import { getTecnicos, createTecnico, deleteTecnico } from '../controllers/usuarios.controller.js';
 
 const router = Router();
 
@@ -15,6 +15,7 @@ router.get('/tecnicos', getTecnicos);
 // POST /lete/api/usuarios (para crear técnicos)
 router.post('/', createTecnico);
 
-// Aquí irían PUT y DELETE en el futuro
+// DELETE /lete/api/usuarios/tecnicos/:id
+router.delete('/tecnicos/:id', deleteTecnico);
 
 export default router;

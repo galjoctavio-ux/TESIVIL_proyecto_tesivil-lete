@@ -71,7 +71,7 @@ export const processRevision = async (payload, tecnico) => {
       .from('casos')
       .update({ status: 'completado' })
       .eq('id', revisionData.caso_id)
-      .select('cliente_nombre') // (¡NUEVO!) Obtenemos el nombre del cliente
+      .select('cliente_nombre, cliente_direccion') // Obtenemos nombre y dirección
       .single();
 
     if (casoError) console.warn(`Error al actualizar caso ${revisionData.caso_id}:`, casoError.message);
@@ -113,7 +113,7 @@ export const processRevision = async (payload, tecnico) => {
 
     const datosParaPDF = {
       cliente_nombre: casoData?.cliente_nombre,
-      cliente_direccion: revisionData.cliente_direccion, // Asumimos que viene en revisionData
+      cliente_direccion: casoData?.cliente_direccion, // Corregido: Usar la dirección del caso
       cliente_email: revisionResult.cliente_email,
       fecha_revision: revisionResult.fecha_revision,
       tecnico_nombre: tecnicoData?.nombre,

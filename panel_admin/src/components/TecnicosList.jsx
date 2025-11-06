@@ -39,7 +39,19 @@ function TecnicosList() {
       }
     };
     fetchTecnicos();
-  }, []); // Se ejecuta solo una vez al cargar
+  }, []);
+
+  const handleDelete = async (tecnicoId) => {
+    if (window.confirm('¿Estás seguro de que quieres eliminar este técnico?')) {
+      try {
+        await api.delete(`/usuarios/tecnicos/${tecnicoId}`);
+        setTecnicos(tecnicos.filter(t => t.id !== tecnicoId));
+      } catch (err) {
+        console.error('Error al eliminar el técnico:', err);
+        setError('No se pudo eliminar el técnico.');
+      }
+    }
+  };
 
   if (isLoading) { return <div>Cargando lista de técnicos...</div>; }
   if (error) { return <div style={{ color: 'red' }}>{error}</div>; }
@@ -66,8 +78,8 @@ function TecnicosList() {
                 <td style={tdStyle}>{tecnico.nombre}</td>
                 <td style={tdStyle}>{tecnico.email}</td>
                 <td style={tdStyle}>
-                  <button>Editar</button>
-                  <button>Borrar</button>
+                  <button onClick={() => alert('Función no implementada')}>Editar</button>
+                  <button onClick={() => handleDelete(tecnico.id)}>Borrar</button>
                 </td>
               </tr>
             ))

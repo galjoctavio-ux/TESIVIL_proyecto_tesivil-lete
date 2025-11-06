@@ -51,6 +51,35 @@ export const getTecnicos = async (req, res) => {
   }
 };
 
+export const deleteTecnico = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const { data: { user }, error: userError } = await supabaseAdmin.auth.admin.deleteUser(id);
+
+    if (userError) {
+      if (userError.status === 404) {
+        return res.status(404).json({ error: 'Técnico no encontrado en Auth' });
+      }
+      throw userError;
+    }
+
+    const { error: profileError } = await supabaseAdmin
+      .from('profiles')
+      .delete()
+      .eq('id', id);
+
+    if (profileError) {
+      console.warn('Usuario de Auth eliminado pero el perfil no. Se requiere limpieza manual:', id);
+      throw profileError;
+    }
+
+    res.status(200).json({ message: 'Técnico eliminado exitosamente' });
+  } catch (error) {
+    res.status(500).json({ error: 'Error al eliminar técnico', details: error.message });
+  }
+};
+
 // POST /usuarios (Crear Técnico)
 export const createTecnico = async (req, res) => {
   const { nombre, email, password } = req.body;
