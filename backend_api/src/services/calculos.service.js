@@ -126,8 +126,8 @@ export const generarDiagnosticosAutomaticos = (revisionData, equiposCalculados, 
 
   equiposCalculados.forEach(equipo => {
     if (equipo.estado_equipo === 'Malo') {
-      const nombre = equipo.nombre_personalizado || equipo.nombre_equipo;
-      diagnosticos.push(`Nota: El equipo ${nombre} se encuentra en mal estado y consume más energía.`);
+      const ubicacion = equipo.nombre_personalizado ? ` (${equipo.nombre_personalizado})` : '';
+      diagnosticos.push(`Nota: El equipo ${equipo.nombre_equipo}${ubicacion} se encuentra en mal estado y consume más energía.`);
     }
   });
 

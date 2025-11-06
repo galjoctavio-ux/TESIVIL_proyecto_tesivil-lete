@@ -57,12 +57,17 @@ function CasosList() {
               <div key={caso.id} style={casoStyle}>
                 <h4>Cliente: {caso.cliente_nombre}</h4>
                 <p>Dirección: {caso.cliente_direccion}</p>
+                <a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(caso.cliente_direccion)}`} target="_blank" rel="noopener noreferrer">
+                  <button style={{ background: '#4285F4', color: 'white', border: 'none', padding: '8px 12px', cursor: 'pointer' }}>
+                    Navegar a
+                  </button>
+                </a>
                 <p>Estado: {caso.status}</p>
 
                 {/* 2. Reemplazar el botón con un Link */}
                 <Link to={`/revision/${caso.id}`}>
-                  <button 
-                    style={{ background: 'green', color: 'white', border: 'none', padding: '8px 12px' }}
+                  <button
+                    style={{ background: 'green', color: 'white', border: 'none', padding: '8px 12px', marginLeft: '10px' }}
                     disabled={caso.status === 'completado'}
                   >
                     {caso.status === 'completado' ? 'Revisión Completada' : 'Iniciar Revisión'}

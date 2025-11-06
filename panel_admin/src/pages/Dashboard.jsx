@@ -7,6 +7,7 @@ import CrearCasoForm from '../components/CrearCasoForm';
 // ¡NUEVO! Importar componentes de técnico
 import TecnicosList from '../components/TecnicosList';
 import CrearTecnicoForm from '../components/CrearTecnicoForm';
+import AgendarCasoForm from '../components/AgendarCasoForm';
 
 function Dashboard() {
   const { user, logout } = useAuth();
@@ -14,6 +15,8 @@ function Dashboard() {
   // Estado para los modales
   const [isCasoModalOpen, setIsCasoModalOpen] = useState(false);
   const [isTecnicoModalOpen, setIsTecnicoModalOpen] = useState(false);
+  const [isAgendarModalOpen, setIsAgendarModalOpen] = useState(false);
+  const [selectedCaso, setSelectedCaso] = useState(null);
 
   // Estado para refrescar las listas
   const [refreshCasosKey, setRefreshCasosKey] = useState(0);
@@ -25,6 +28,11 @@ function Dashboard() {
   };
   const handleTecnicoActualizado = () => {
     setRefreshTecnicosKey(oldKey => oldKey + 1);
+  };
+
+  const openAgendarModal = (caso) => {
+    setSelectedCaso(caso);
+    setIsAgendarModalOpen(true);
   };
 
   return (
@@ -43,7 +51,7 @@ function Dashboard() {
       <button onClick={() => setIsCasoModalOpen(true)}>
         + Crear Nuevo Caso
       </button>
-      <CasosList key={refreshCasosKey} onDatosActualizados={handleCasoActualizado} />
+      <CasosList key={refreshCasosKey} onDatosActualizados={handleCasoActualizado} onAgendarClick={openAgendarModal} />
 
       {/* --- SECCIÓN TÉCNICOS (¡NUEVO!) --- */}
       <div style={{marginTop: '20px'}}>
@@ -67,6 +75,16 @@ function Dashboard() {
           onTecnicoCreado={handleTecnicoActualizado}
         />
       </Modal>
+
+      {selectedCaso && (
+        <Modal isOpen={isAgendarModalOpen} onClose={() => setIsAgendarModalOpen(false)}>
+          <AgendarCasoForm
+            caso={selectedCaso}
+            onClose={() => setIsAgendarModalOpen(false)}
+            onCitaCreada={handleCasoActualizado}
+          />
+        </Modal>
+      )}
     </div>
   );
 }

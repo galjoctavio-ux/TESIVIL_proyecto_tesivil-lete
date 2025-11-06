@@ -5,6 +5,7 @@ import authRoutes from './routes/auth.routes.js';
 import usuariosRoutes from './routes/usuarios.routes.js';
 import casosRoutes from './routes/casos.routes.js';
 import revisionesRoutes from './routes/revisiones.routes.js';
+import citasRoutes from './routes/citas.routes.js';
 
 // Cargar variables de entorno
 dotenv.config();
@@ -36,6 +37,7 @@ apiRouter.use('/auth', authRoutes);
 apiRouter.use('/usuarios', usuariosRoutes);
 apiRouter.use('/casos', casosRoutes);
 apiRouter.use('/revisiones', revisionesRoutes);
+apiRouter.use('/citas', citasRoutes);
 
 // ¡IMPORTANTE! Montamos nuestro router en el prefijo que definimos
 app.use('/lete/api', apiRouter);
