@@ -3,54 +3,9 @@ import { useAuth } from '../context/AuthContext';
 import CasosList from '../components/CasosList';
 import Modal from '../components/Modal';
 import CrearCasoForm from '../components/CrearCasoForm';
-
-// ¡NUEVO! Importar componentes de técnico
 import TecnicosList from '../components/TecnicosList';
 import CrearTecnicoForm from '../components/CrearTecnicoForm';
 import AgendarCasoForm from '../components/AgendarCasoForm';
-
-const cardStyles = {
-  backgroundColor: '#FFFFFF',
-  borderRadius: '8px',
-  boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
-  padding: '24px',
-  marginBottom: '24px',
-  transition: 'all 0.3s ease',
-};
-
-const headerStyles = {
-  display: 'flex',
-  justifyContent: 'space-between',
-  alignItems: 'center',
-  marginBottom: '24px',
-  paddingBottom: '16px',
-  borderBottom: '1px solid #E2E8F0',
-};
-
-const mainButtonStyles = {
-  backgroundColor: '#10213F',
-  color: 'white',
-  border: 'none',
-  borderRadius: '6px',
-  padding: '12px 20px',
-  fontSize: '16px',
-  fontWeight: '600',
-  cursor: 'pointer',
-  transition: 'background-color 0.3s ease, transform 0.2s ease',
-  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
-};
-
-const secondaryButtonStyles = {
-  backgroundColor: '#F1F5F9',
-  color: '#1E293B',
-  border: '1px solid #E2E8F0',
-  borderRadius: '6px',
-  padding: '8px 16px',
-  fontSize: '14px',
-  fontWeight: '500',
-  cursor: 'pointer',
-  transition: 'background-color 0.3s ease, transform 0.2s ease',
-};
 
 function Dashboard() {
   const { user, logout } = useAuth();
@@ -71,18 +26,16 @@ function Dashboard() {
   };
 
   return (
-    <div style={{ backgroundColor: '#F8FAFC', minHeight: '100vh', padding: '32px' }}>
-      <header style={headerStyles}>
-        <h1 style={{ fontSize: '28px', fontWeight: 'bold', color: '#1E293B' }}>Dashboard de Administración</h1>
-        <div style={{ display: 'flex', alignItems: 'center' }}>
-          <span style={{ color: '#475569', marginRight: '24px' }}>
+    <div className="dashboard-container">
+      <header className="dashboard-header">
+        <h1>Dashboard de Administración</h1>
+        <div className="header-user-info">
+          <span>
             ¡Bienvenido, <strong>{user?.nombre || 'Admin'}</strong>!
           </span>
           <button
             onClick={logout}
-            style={secondaryButtonStyles}
-            onMouseOver={e => e.currentTarget.style.backgroundColor = '#E2E8F0'}
-            onMouseOut={e => e.currentTarget.style.backgroundColor = '#F1F5F9'}
+            className="secondary-button"
           >
             Cerrar Sesión
           </button>
@@ -90,15 +43,12 @@ function Dashboard() {
       </header>
 
       <main>
-        {/* --- SECCIÓN CASOS --- */}
-        <div style={cardStyles}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-            <h2 style={{ fontSize: '22px', fontWeight: '600', color: '#1E293B' }}>Gestión de Casos</h2>
+        <div className="card">
+          <div className="card-header">
+            <h2>Gestión de Casos</h2>
             <button
               onClick={() => setIsCasoModalOpen(true)}
-              style={mainButtonStyles}
-              onMouseOver={e => e.currentTarget.style.backgroundColor = '#1E293B'}
-              onMouseOut={e => e.currentTarget.style.backgroundColor = '#10213F'}
+              className="main-button"
             >
               + Crear Nuevo Caso
             </button>
@@ -110,15 +60,12 @@ function Dashboard() {
           />
         </div>
 
-        {/* --- SECCIÓN TÉCNICOS --- */}
-        <div style={cardStyles}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-            <h2 style={{ fontSize: '22px', fontWeight: '600', color: '#1E293B' }}>Gestión de Técnicos</h2>
+        <div className="card">
+          <div className="card-header">
+            <h2>Gestión de Técnicos</h2>
             <button
               onClick={() => setIsTecnicoModalOpen(true)}
-              style={mainButtonStyles}
-              onMouseOver={e => e.currentTarget.style.backgroundColor = '#1E293B'}
-              onMouseOut={e => e.currentTarget.style.backgroundColor = '#10213F'}
+              className="main-button"
             >
               + Crear Nuevo Técnico
             </button>
@@ -127,7 +74,6 @@ function Dashboard() {
         </div>
       </main>
 
-      {/* --- MODALES --- */}
       <Modal isOpen={isCasoModalOpen} onClose={() => setIsCasoModalOpen(false)}>
         <CrearCasoForm onClose={() => setIsCasoModalOpen(false)} onCasoCreado={handleCasoActualizado} />
       </Modal>
