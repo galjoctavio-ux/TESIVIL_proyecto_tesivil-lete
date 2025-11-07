@@ -107,7 +107,7 @@ export const processRevision = async (payload, tecnico) => {
     console.log('Iniciando recopilación de datos para PDF...');
     const { data: tecnicoData } = await supabaseAdmin
       .from('profiles')
-      .select('nombre')
+      .select('nombre, firma_url')
       .eq('id', tecnico.id)
       .single();
 
@@ -119,7 +119,8 @@ export const processRevision = async (payload, tecnico) => {
       tecnico_nombre: tecnicoData?.nombre,
       revision: { ...revisionResult, firma_url: firmaUrl },
       equipos: equiposCalculados,
-      firma_url: firmaUrl
+      firma_cliente_url: firmaUrl, // Renombrado para claridad
+      firma_tecnico_url: tecnicoData?.firma_url
     };
 
     const pdfBuffer = await generarPDF(datosParaPDF);

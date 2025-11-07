@@ -66,17 +66,27 @@ const getHtmlPlantilla = () => {
       .top-consumers li {
         margin-bottom: 5px;
       }
+      .signature-container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        margin-top: 50px;
+        padding-top: 20px;
+        border-top: 1px solid #eee;
+      }
       .signature {
-        margin-top: 40px;
         text-align: center;
       }
       .signature img {
-        max-width: 300px;
+        max-width: 250px;
+        height: 125px; /* Altura fija */
+        object-fit: contain; /* Ajustar imagen sin deformar */
         border-bottom: 1px solid #000;
         padding-bottom: 5px;
+        margin-bottom: 5px;
       }
       .signature p {
-        margin-top: 5px;
+        margin: 0;
         font-style: italic;
       }
     </style>
@@ -134,9 +144,15 @@ const getHtmlPlantilla = () => {
             {{causas_alto_consumo}}
           </ul>
         </div>
-        <div class="signature">
-          <img src="{{firma_url}}" alt="Firma del Cliente" />
-          <p>Firma del Cliente</p>
+        <div class="signature-container">
+          <div class="signature">
+            <img src="{{firma_cliente_url}}" alt="Firma del Cliente" />
+            <p>Firma del Cliente</p>
+          </div>
+          <div class="signature">
+            <img src="{{firma_tecnico_url}}" alt="Firma del Ingeniero" />
+            <p>Firma del Ingeniero</p>
+          </div>
         </div>
       </div>
     </body>
@@ -156,7 +172,9 @@ export const generarPDF = async (datos) => {
   html = html.replace('{{tipo_servicio}}', datos.revision.tipo_servicio || 'N/A');
   html = html.replace('{{edad_instalacion}}', datos.revision.edad_instalacion || 'N/A');
   html = html.replace('{{observaciones_cc}}', datos.revision.observaciones_cc || 'N/A');
-  html = html.replace('{{firma_url}}', datos.firma_url || '');
+  html = html.replace('{{firma_cliente_url}}', datos.firma_cliente_url || '');
+  html = html.replace('{{firma_tecnico_url}}', datos.firma_tecnico_url || '');
+
 
   let listaHtml = '';
   if (datos.revision.diagnosticos_automaticos && datos.revision.diagnosticos_automaticos.length > 0) {
