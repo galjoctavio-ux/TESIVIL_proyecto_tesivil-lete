@@ -86,7 +86,7 @@ function CasosList({ onDatosActualizados, onAgendarClick }) { // 1. Recibir 'onD
                   </button>
                   <button
                     onClick={() => onAgendarClick(caso)}
-                    disabled={!caso.tecnico_id}
+                    disabled={caso.status !== 'pendiente_asignacion'}
                   >
                     Agendar
                   </button>

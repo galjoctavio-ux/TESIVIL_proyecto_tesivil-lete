@@ -1,14 +1,22 @@
 import axios from 'axios';
 
-// 1. Obtenemos la URL base de la API desde las variables de entorno
 const VITE_API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-// 2. Creamos una instancia de Axios
 const api = axios.create({
   baseURL: VITE_API_BASE_URL,
 });
 
-// 3. El AuthContext se encargará de configurar el token
-// de autorización en esta instancia.
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response && error.response.status === 401) {
+      localStorage.removeItem('authToken');
+      localStorage.removeItem('user');
+      delete api.defaults.headers.common['Authorization'];
+      window.location.href = '/lete/app/';
+    }
+    return Promise.reject(error);
+  }
+);
 
 export default api;
