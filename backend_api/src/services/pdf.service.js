@@ -156,7 +156,7 @@ export const generarPDF = async (datos) => {
   html = html.replace('{{tipo_servicio}}', datos.revision.tipo_servicio || 'N/A');
   html = html.replace('{{edad_instalacion}}', datos.revision.edad_instalacion || 'N/A');
   html = html.replace('{{observaciones_cc}}', datos.revision.observaciones_cc || 'N/A');
-  html = html.replace('{{firma_url}}', datos.revision.firma_url || '');
+  html = html.replace('{{firma_url}}', datos.firma_url || '');
 
   let listaHtml = '';
   if (datos.revision.diagnosticos_automaticos && datos.revision.diagnosticos_automaticos.length > 0) {

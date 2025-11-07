@@ -154,11 +154,11 @@ function RevisionForm() {
   };
 
   const { tipo_servicio } = formData;
-  const esBifasico = tipo_servicio === '2F+Neutro';
-  const esTrifasico = tipo_servicio === 'Trifásico';
-  const esBifasicoConPaneles = tipo_servicio === '2F+N con Paneles';
-  const esTrifasicoConPaneles = tipo_servicio === 'Trifásico con Paneles';
+  // Variables simplificadas para la lógica condicional
   const tienePaneles = tipo_servicio.includes('Paneles');
+  const esMonofasico = tipo_servicio === 'Monofásico';
+  const esBifasico = tipo_servicio.startsWith('2F'); // Cubre '2F+Neutro' y '2F+N con Paneles'
+  const esTrifasico = tipo_servicio.startsWith('Trifásico'); // Cubre 'Trifásico' y 'Trifásico con Paneles'
 
   return (
     <div style={{ padding: '20px' }}>
@@ -242,49 +242,51 @@ function RevisionForm() {
               <input type="number" name="corriente_red_f1" id="corriente_red_f1" value={formData.corriente_red_f1} onChange={handleChange} step="0.1" />
             </div>
 
-            {/* FASE 2: Visible para Bifásico, Trifásico y sus variantes con paneles */}
-            {(esBifasico || esTrifasico || esBifasicoConPaneles || esTrifasicoConPaneles) && (
+            {/* FASE 2: Bifásico y Trifásico */}
+            {(esBifasico || esTrifasico) && (
               <div style={inputGroupStyle}>
                 <label style={labelStyle} htmlFor="corriente_red_f2">Corriente Red F2</label>
                 <input type="number" name="corriente_red_f2" id="corriente_red_f2" value={formData.corriente_red_f2} onChange={handleChange} step="0.1" />
               </div>
             )}
 
-            {/* FASE 3: Visible solo para Trifásico y Trifásico con paneles */}
-            {(esTrifasico || esTrifasicoConPaneles) && (
+            {/* FASE 3: Trifásico */}
+            {esTrifasico && (
               <div style={inputGroupStyle}>
                 <label style={labelStyle} htmlFor="corriente_red_f3">Corriente Red F3</label>
                 <input type="number" name="corriente_red_f3" id="corriente_red_f3" value={formData.corriente_red_f3} onChange={handleChange} step="0.1" />
               </div>
             )}
 
-            {/* NEUTRO: Visible para Monofásico y Bifásico y sus variantes con paneles */}
-            {(tipo_servicio === 'Monofásico' || esBifasico || esBifasicoConPaneles) && (
+            {/* NEUTRO: Monofásico y Bifásico */}
+            {(esMonofasico || esBifasico) && (
               <div style={inputGroupStyle}>
                 <label style={labelStyle} htmlFor="corriente_red_n">Corriente Red Neutro</label>
                 <input type="number" name="corriente_red_n" id="corriente_red_n" value={formData.corriente_red_n} onChange={handleChange} step="0.1" />
               </div>
             )}
 
+            {/* SECCIÓN PANELES SOLARES */}
             {tienePaneles && (
               <div style={{background: '#e8f5e9', padding: '10px', marginTop: '15px'}}>
                 <h4>Mediciones de Paneles Solares (Corriente)</h4>
-                {/* Panel F1: Visible si hay paneles */}
+
+                {/* Panel F1: Siempre visible si hay paneles */}
                 <div style={inputGroupStyle}>
                   <label style={labelStyle} htmlFor="corriente_paneles_f1">Corriente Paneles F1</label>
                   <input type="number" name="corriente_paneles_f1" id="corriente_paneles_f1" value={formData.corriente_paneles_f1} onChange={handleChange} step="0.1" />
                 </div>
 
-                {/* Panel F2: Visible para 2F+N con Paneles y Trifásico con Paneles */}
-                {(esBifasicoConPaneles || esTrifasicoConPaneles) && (
+                {/* Panel F2: Bifásico y Trifásico con paneles */}
+                {(esBifasico || esTrifasico) && (
                    <div style={inputGroupStyle}>
                     <label style={labelStyle} htmlFor="corriente_paneles_f2">Corriente Paneles F2</label>
                     <input type="number" name="corriente_paneles_f2" id="corriente_paneles_f2" value={formData.corriente_paneles_f2} onChange={handleChange} step="0.1" />
                   </div>
                 )}
 
-                {/* Panel F3: Visible solo para Trifásico con Paneles */}
-                {esTrifasicoConPaneles && (
+                {/* Panel F3: Trifásico con paneles */}
+                {esTrifasico && (
                    <div style={inputGroupStyle}>
                     <label style={labelStyle} htmlFor="corriente_paneles_f3">Corriente Paneles F3</label>
                     <input type="number" name="corriente_paneles_f3" id="corriente_paneles_f3" value={formData.corriente_paneles_f3} onChange={handleChange} step="0.1" />
@@ -326,7 +328,7 @@ function RevisionForm() {
                   <label style={labelStyle} htmlFor="corriente_fuga_f1">Corriente Fuga F1 (Amperes)</label>
                   <input type="number" name="corriente_fuga_f1" id="corriente_fuga_f1" value={formData.corriente_fuga_f1} onChange={handleChange} step="0.01" />
                 </div>
-                {(esBifasico || esTrifasico || esBifasicoConPaneles) && (
+                {(esBifasico || esTrifasico) && (
                    <div style={inputGroupStyle}>
                     <label style={labelStyle} htmlFor="corriente_fuga_f2">Corriente Fuga F2 (Amperes)</label>
                     <input type="number" name="corriente_fuga_f2" id="corriente_fuga_f2" value={formData.corriente_fuga_f2} onChange={handleChange} step="0.01" />

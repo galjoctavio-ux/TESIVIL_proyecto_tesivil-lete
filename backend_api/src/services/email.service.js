@@ -14,16 +14,28 @@ const fromEmail = 'reportes@tesivil.com';
  * @param {string} clienteNombre - El nombre del cliente
  * @param {string} pdfUrl - La URL pública del PDF
  */
-export const enviarReportePorEmail = async (clienteEmail, clienteNombre, pdfUrl) => {
+export const enviarReportePorEmail = async (clienteEmail, clienteNombre, pdfUrl, causasAltoConsumo) => {
   if (!process.env.RESEND_API_KEY) {
     console.warn('RESEND_API_KEY no está configurada. Saltando envío de email.');
     return;
   }
 
   if (!pdfUrl) {
-     console.warn('No hay pdfUrl. Saltando envío de email.');
-     return;
+    console.warn('No hay pdfUrl. Saltando envío de email.');
+    return;
   }
+
+  // Generar la lista de causas de alto consumo
+  const causasHtml = causasAltoConsumo && causasAltoConsumo.length > 0
+    ? `
+        <div style="background-color: #f0f5ff; padding: 20px; border-radius: 6px; margin: 25px 0;">
+          <h2 style="color: #10213f; font-size: 18px; margin-bottom: 15px;">Nuestro proceso de revisión identificó:</h2>
+          <ul style="list-style-type: '✔ '; padding-left: 20px; font-size: 16px;">
+            ${causasAltoConsumo.map(causa => `<li style="margin-bottom: 10px;">${causa}</li>`).join('')}
+          </ul>
+        </div>
+      `
+    : '';
 
   console.log(`Enviando reporte a ${clienteEmail}...`);
 
@@ -41,6 +53,9 @@ export const enviarReportePorEmail = async (clienteEmail, clienteNombre, pdfUrl)
             <h1 style="color: #10213f; font-size: 24px; margin-bottom: 20px;">Hola, ${clienteNombre},</h1>
             <p style="font-size: 16px;">Gracias por confiar en <strong>Luz en tu Espacio (LETE)</strong> para realizar el diagnóstico de tu instalación eléctrica.</p>
             <p style="font-size: 16px;">Hemos concluido la revisión y tu reporte detallado ya está disponible. En él encontrarás nuestras observaciones, mediciones clave y recomendaciones para optimizar tu consumo y seguridad.</p>
+
+            ${causasHtml}
+
             <div style="text-align: center; margin: 30px 0;">
               <a href="${pdfUrl}" style="background-color: #10213f; color: #ffffff; padding: 14px 28px; text-decoration: none; border-radius: 6px; font-weight: bold; font-size: 16px;">
                 Ver mi Reporte PDF
