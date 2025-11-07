@@ -118,7 +118,8 @@ export const processRevision = async (payload, tecnico) => {
       fecha_revision: revisionResult.fecha_revision,
       tecnico_nombre: tecnicoData?.nombre,
       revision: { ...revisionResult, firma_url: firmaUrl },
-      equipos: equiposCalculados
+      equipos: equiposCalculados,
+      firma_url: firmaUrl
     };
 
     const pdfBuffer = await generarPDF(datosParaPDF);
@@ -145,7 +146,8 @@ export const processRevision = async (payload, tecnico) => {
       await enviarReportePorEmail(
         revisionResult.cliente_email,
         casoData.cliente_nombre,
-        pdfUrl
+        pdfUrl,
+        revisionResult.causas_alto_consumo // ¡NUEVO! Pasamos las causas
       );
     } else {
       console.warn('Faltan datos (pdfUrl, email o nombre) para enviar el correo.');
