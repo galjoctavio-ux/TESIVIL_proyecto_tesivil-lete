@@ -386,8 +386,7 @@ function RevisionForm() {
           </div>
         )}
 
-{currentStep === 6 && (
-          <div>
+        <div style={{ display: currentStep === 6 ? 'block' : 'none' }}>
             <h3>Paso 6: Cierre y Firma</h3>
             <div style={inputGroupStyle}>
               <label style={labelStyle}>Causas de su Alto Consumo (Marcar las que apliquen)</label>
@@ -431,7 +430,6 @@ function RevisionForm() {
               {isSubmitting ? 'Enviando...' : (submitSuccess ? '¡Reporte Enviado con Éxito!' : 'Generar y Enviar Reporte')}
             </button>
           </div>
-        )}
       </div>
     </div>
   );
