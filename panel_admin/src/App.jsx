@@ -4,6 +4,7 @@ import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import ProtectedRoute from './components/ProtectedRoute'; // 1. Importar
 import './App.css';
+import './responsive.css';
 
 function App() {
   return (

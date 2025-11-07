@@ -1,25 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 
-const loginStyles = {
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
-  justifyContent: 'center',
-  height: '100vh',
-  gap: '10px'
-};
-
-const formStyles = {
-  display: 'flex',
-  flexDirection: 'column',
-  padding: '20px',
-  border: '1px solid #ccc',
-  borderRadius: '8px',
-  backgroundColor: '#fff',
-  gap: '15px'
-};
-
 function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -42,9 +23,9 @@ function Login() {
   };
 
   return (
-    <div style={loginStyles}>
+    <div className="login-container">
       <h2>Panel de Administrador</h2>
-      <form style={formStyles} onSubmit={handleSubmit}>
+      <form className="login-form" onSubmit={handleSubmit}>
         <div>
           <label htmlFor="email">Email: </label>
           <input 
@@ -65,7 +46,7 @@ function Login() {
             required 
           />
         </div>
-        {error && <p style={{ color: 'red' }}>{error}</p>}
+        {error && <p className="error-message">{error}</p>}
         <button type="submit">Entrar</button>
       </form>
     </div>
