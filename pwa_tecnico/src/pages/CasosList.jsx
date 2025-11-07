@@ -112,14 +112,12 @@ function CasosList() {
                 </p>
 
                 <div style={{ display: 'flex', gap: '12px' }}>
-                  <a
-                    href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(caso.cliente_direccion)}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                  <button
+                    onClick={() => window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(caso.cliente_direccion)}`, "_blank")}
                     style={{...actionButtonStyles, backgroundColor: '#3B82F6', color: 'white'}}
                   >
                     Navegar a Dirección
-                  </a>
+                  </button>
                   <Link to={`/revision/${caso.id}`} style={{ textDecoration: 'none' }}>
                     <button
                       style={{
