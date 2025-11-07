@@ -18,7 +18,8 @@ const modalContentStyle = {
   padding: '20px',
   borderRadius: '8px',
   minWidth: '300px',
-  maxWidth: '500px',
+  width: '50vw',
+  maxWidth: '800px',
 };
 
 function Modal({ isOpen, onClose, children }) {

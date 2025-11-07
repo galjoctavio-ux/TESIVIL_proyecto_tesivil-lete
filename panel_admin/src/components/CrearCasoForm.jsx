@@ -7,8 +7,22 @@ const libraries = ['places'];
 const formStyle = {
   display: 'flex',
   flexDirection: 'column',
-  gap: '10px',
+  gap: '15px',
 };
+
+const inputStyle = {
+  width: '100%',
+  padding: '10px',
+  border: '1px solid #ccc',
+  borderRadius: '4px',
+  boxSizing: 'border-box',
+};
+
+const labelStyle = {
+  fontWeight: 'bold',
+  marginBottom: '5px',
+  display: 'block',
+}
 
 function CrearCasoForm({ onClose, onCasoCreado }) {
   const [nombre, setNombre] = useState('');
@@ -57,13 +71,14 @@ function CrearCasoForm({ onClose, onCasoCreado }) {
       <form style={formStyle} onSubmit={handleSubmit}>
         <h3>Crear Nuevo Caso</h3>
         <div>
-          <label>Nombre del Cliente:</label>
-          <input type="text" value={nombre} onChange={(e) => setNombre(e.target.value)} required />
+          <label style={labelStyle}>Nombre del Cliente:</label>
+          <input style={inputStyle} type="text" value={nombre} onChange={(e) => setNombre(e.target.value)} required />
         </div>
         <div>
-          <label>Dirección:</label>
+          <label style={labelStyle}>Dirección:</label>
           <Autocomplete onLoad={onLoad} onPlaceChanged={onPlaceChanged}>
             <input
+              style={inputStyle}
               type="text"
               value={direccion}
               onChange={(e) => setDireccion(e.target.value)}
@@ -73,12 +88,12 @@ function CrearCasoForm({ onClose, onCasoCreado }) {
           </Autocomplete>
         </div>
         <div>
-          <label>Teléfono:</label>
-          <input type="text" value={telefono} onChange={(e) => setTelefono(e.target.value)} />
+          <label style={labelStyle}>Teléfono:</label>
+          <input style={inputStyle} type="text" value={telefono} onChange={(e) => setTelefono(e.target.value)} />
         </div>
         <div>
-          <label>Comentarios Iniciales:</label>
-          <textarea value={comentarios} onChange={(e) => setComentarios(e.target.value)} />
+          <label style={labelStyle}>Comentarios Iniciales:</label>
+          <textarea style={inputStyle} value={comentarios} onChange={(e) => setComentarios(e.target.value)} />
         </div>
         {error && <p style={{ color: 'red' }}>{error}</p>}
         <button type="submit">Guardar Caso</button>

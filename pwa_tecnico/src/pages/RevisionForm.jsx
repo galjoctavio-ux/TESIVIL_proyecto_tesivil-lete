@@ -12,6 +12,28 @@ const tabStyle = { padding: '10px', cursor: 'pointer', border: '1px solid #ccc',
 const activeTabStyle = { ...tabStyle, background: '#fff', borderBottom: '1px solid #fff', marginTop: '-1px' };
 const equipoBoxStyle = { border: '1px solid #ccc', padding: '10px', marginTop: '10px', borderRadius: '5px', display: 'flex', flexWrap: 'wrap', gap: '10px' };
 const sigCanvasStyle = { border: '1px solid black', width: '100%', minHeight: '150px', borderRadius: '5px' };
+const overlayStyle = {
+  position: 'fixed',
+  top: 0,
+  left: 0,
+  width: '100%',
+  height: '100%',
+  backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  zIndex: 1001,
+  flexDirection: 'column',
+  color: 'white',
+};
+const spinnerStyle = {
+  border: '8px solid #f3f3f3',
+  borderTop: '8px solid #3498db',
+  borderRadius: '50%',
+  width: '60px',
+  height: '60px',
+  animation: 'spin 2s linear infinite',
+};
 
 function RevisionForm() {
   const { casoId } = useParams();
@@ -132,10 +154,17 @@ function RevisionForm() {
 
   const esBifasico = formData.tipo_servicio === '2F+Neutro';
   const esTrifasico = formData.tipo_servicio === 'Trifásico';
+  const esBifasicoConPaneles = formData.tipo_servicio === '2F+N con Paneles';
   const tienePaneles = formData.tipo_servicio.includes('Paneles');
 
   return (
     <div style={{ padding: '20px' }}>
+      {isSubmitting && (
+        <div style={overlayStyle}>
+          <div style={spinnerStyle}></div>
+          <p>Enviando reporte...</p>
+        </div>
+      )}
       <h2>Iniciando Revisión para el Caso #{casoId}</h2>
 
       <div style={tabContainerStyle}>
@@ -271,13 +300,13 @@ function RevisionForm() {
                   <label style={labelStyle} htmlFor="corriente_fuga_f1">Corriente Fuga F1 (Amperes)</label>
                   <input type="number" name="corriente_fuga_f1" id="corriente_fuga_f1" value={formData.corriente_fuga_f1} onChange={handleChange} step="0.01" />
                 </div>
-                {(esBifasico || esTrifasico || tienePaneles) && (
+                {(esBifasico || esTrifasico || esBifasicoConPaneles) && (
                    <div style={inputGroupStyle}>
                     <label style={labelStyle} htmlFor="corriente_fuga_f2">Corriente Fuga F2 (Amperes)</label>
                     <input type="number" name="corriente_fuga_f2" id="corriente_fuga_f2" value={formData.corriente_fuga_f2} onChange={handleChange} step="0.01" />
                   </div>
                 )}
-                {(esTrifasico || tienePaneles) && (
+                {esTrifasico && (
                    <div style={inputGroupStyle}>
                     <label style={labelStyle} htmlFor="corriente_fuga_f3">Corriente Fuga F3 (Amperes)</label>
                     <input type="number" name="corriente_fuga_f3" id="corriente_fuga_f3" value={formData.corriente_fuga_f3} onChange={handleChange} step="0.01" />
