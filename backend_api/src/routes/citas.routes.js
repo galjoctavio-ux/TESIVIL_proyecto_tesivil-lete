@@ -1,11 +1,11 @@
 import express from 'express';
 import { supabaseAdmin } from '../services/supabaseClient.js';
-import { authmiddleware } from '../middleware/auth.middleware.js';
+import { requireAuth } from '../middleware/auth.middleware.js';
 
 const router = express.Router();
 
 // GET /citas?tecnico_id=...
-router.get('/', authMiddleware, async (req, res) => {
+router.get('/', requireAuth, async (req, res) => {
   const { tecnico_id } = req.query;
   if (!tecnico_id) {
     return res.status(400).json({ message: 'El ID del técnico es requerido.' });
@@ -25,7 +25,7 @@ router.get('/', authMiddleware, async (req, res) => {
 });
 
 // POST /citas
-router.post('/', authMiddleware, async (req, res) => {
+router.post('/', requireAuth, async (req, res) => {
   const { caso_id, tecnico_id, fecha, hora, duracion } = req.body;
 
   if (!caso_id || !tecnico_id || !fecha || !hora || !duracion) {
