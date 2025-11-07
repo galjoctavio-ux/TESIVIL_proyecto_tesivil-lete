@@ -35,6 +35,14 @@ const spinnerStyle = {
   animation: 'spin 2s linear infinite',
 };
 
+// Keyframes para la animación del spinner
+const keyframesStyle = `
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+`;
+
 function RevisionForm() {
   const { casoId } = useParams();
   const navigate = useNavigate();
@@ -154,14 +162,23 @@ function RevisionForm() {
   };
 
   const { tipo_servicio } = formData;
-  // Variables simplificadas para la lógica condicional
-  const tienePaneles = tipo_servicio.includes('Paneles');
+  // Variables explícitas para la lógica condicional de renderizado
   const esMonofasico = tipo_servicio === 'Monofásico';
-  const esBifasico = tipo_servicio.startsWith('2F'); // Cubre '2F+Neutro' y '2F+N con Paneles'
-  const esTrifasico = tipo_servicio.startsWith('Trifásico'); // Cubre 'Trifásico' y 'Trifásico con Paneles'
+  const esBifasico = tipo_servicio === '2F+Neutro' || tipo_servicio === '2F+N con Paneles';
+  const esTrifasico = tipo_servicio === 'Trifásico' || tipo_servicio === 'Trifásico con Paneles';
+  const tienePaneles = tipo_servicio === '2F+N con Paneles' || tipo_servicio === 'Trifásico con Paneles';
 
   return (
     <div style={{ padding: '20px' }}>
+      <style>{keyframesStyle}</style> {/* Inyecta la animación en el DOM */}
+
+      {isSubmitting && (
+        <div style={overlayStyle}>
+          <div style={spinnerStyle}></div>
+          <p style={{ marginTop: '20px', fontSize: '1.2em' }}>Enviando reporte, por favor espera...</p>
+        </div>
+      )}
+
       <h2>Iniciando Revisión para el Caso #{casoId}</h2>
 
       <div style={tabContainerStyle}>
@@ -277,17 +294,17 @@ function RevisionForm() {
                   <input type="number" name="corriente_paneles_f1" id="corriente_paneles_f1" value={formData.corriente_paneles_f1} onChange={handleChange} step="0.1" />
                 </div>
 
-                {/* Panel F2: Bifásico y Trifásico con paneles */}
-                {(esBifasico || esTrifasico) && (
-                   <div style={inputGroupStyle}>
+                {/* Panel F2: Visible para servicios bifásicos y trifásicos con paneles */}
+                {(tipo_servicio === '2F+N con Paneles' || tipo_servicio === 'Trifásico con Paneles') && (
+                  <div style={inputGroupStyle}>
                     <label style={labelStyle} htmlFor="corriente_paneles_f2">Corriente Paneles F2</label>
                     <input type="number" name="corriente_paneles_f2" id="corriente_paneles_f2" value={formData.corriente_paneles_f2} onChange={handleChange} step="0.1" />
                   </div>
                 )}
 
-                {/* Panel F3: Trifásico con paneles */}
-                {esTrifasico && (
-                   <div style={inputGroupStyle}>
+                {/* Panel F3: Visible solo para servicios trifásicos con paneles */}
+                {tipo_servicio === 'Trifásico con Paneles' && (
+                  <div style={inputGroupStyle}>
                     <label style={labelStyle} htmlFor="corriente_paneles_f3">Corriente Paneles F3</label>
                     <input type="number" name="corriente_paneles_f3" id="corriente_paneles_f3" value={formData.corriente_paneles_f3} onChange={handleChange} step="0.1" />
                   </div>
