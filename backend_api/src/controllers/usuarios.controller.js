@@ -6,7 +6,6 @@ export const getTecnicos = async (req, res) => {
   try {
     console.log('Obteniendo lista de técnicos...');
 
-    // 1. Obtenemos SÓLO id y nombre de los perfiles de técnicos
     const { data: profilesData, error: profilesError } = await supabaseAdmin
       .from('profiles')
       .select('id, nombre')
@@ -17,25 +16,48 @@ export const getTecnicos = async (req, res) => {
       throw profilesError;
     }
 
-    console.log(`Perfiles encontrados: ${profilesData.length}`);
+    console.log(`Perfiles de técnicos encontrados: ${profilesData.length}`);
 
-    // 2. Obtenemos la lista de usuarios desde Auth usando el método correcto
-    const { data: usersResponse, error: usersError } = await supabaseAdmin.auth.admin.listUsers();
-    
-    if (usersError) {
-      console.error('Error al listar usuarios:', usersError.message);
-      throw usersError;
-    }
+    let allUsers = [];
+    let page = 1;
+    let totalPages = 1;
 
-    console.log(`Usuarios en Auth: ${usersResponse.users.length}`);
+    // Bucle para obtener todos los usuarios de todas las páginas
+    do {
+      const { data: usersResponse, error: usersError } = await supabaseAdmin.auth.admin.listUsers({
+        page: page,
+        perPage: 50,
+      });
 
-    // 3. Combinamos las listas en el backend
+      if (usersError) {
+        console.error(`Error al listar usuarios (página ${page}):`, usersError.message);
+        throw usersError;
+      }
+
+      if (usersResponse.users) {
+        allUsers.push(...usersResponse.users);
+      }
+
+      // Actualizamos totalPages en la primera iteración.
+      // Si el total de usuarios es menor a perPage, aud no será un número > 0
+      if (page === 1) {
+        const totalUsers = usersResponse.total || (usersResponse.users?.length || 0);
+        totalPages = Math.ceil(totalUsers / 50);
+      }
+
+      page++;
+
+    } while (page <= totalPages);
+
+
+    console.log(`Total de usuarios en Auth recuperados: ${allUsers.length}`);
+
     const tecnicos = profilesData.map(profile => {
-      const authUser = usersResponse.users.find(u => u.id === profile.id);
+      const authUser = allUsers.find(u => u.id === profile.id);
       return {
         id: profile.id,
         nombre: profile.nombre,
-        email: authUser ? authUser.email : 'Email no encontrado'
+        email: authUser ? authUser.email : 'Email no encontrado',
       };
     });
 
@@ -44,9 +66,9 @@ export const getTecnicos = async (req, res) => {
 
   } catch (error) {
     console.error('Error completo:', error);
-    res.status(500).json({ 
-      error: 'Error al obtener técnicos', 
-      details: error.message 
+    res.status(500).json({
+      error: 'Error al obtener técnicos',
+      details: error.message,
     });
   }
 };
