@@ -4,14 +4,42 @@ import api from '../apiService';
 // 1. Importar Link
 import { Link } from 'react-router-dom';
 
-// (Estilos ...)
-const listStyle = { padding: '20px' };
-const casoStyle = {
-  background: '#fff',
-  border: '1px solid #ddd',
+const listStyle = {
+  backgroundColor: '#F8FAFC',
+  minHeight: '100vh',
+  padding: '32px'
+};
+
+const cardStyle = {
+  backgroundColor: '#FFFFFF',
   borderRadius: '8px',
-  padding: '16px',
-  marginBottom: '10px'
+  boxShadow: '0 4px 12px rgba(0, 0, 0, 0.08)',
+  padding: '24px',
+  marginBottom: '20px',
+  transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+};
+
+const headerStyles = {
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+  marginBottom: '24px',
+  paddingBottom: '16px',
+  borderBottom: '1px solid #E2E8F0',
+};
+
+const actionButtonStyles = {
+  border: 'none',
+  borderRadius: '6px',
+  padding: '10px 18px',
+  fontSize: '15px',
+  fontWeight: '600',
+  cursor: 'pointer',
+  transition: 'background-color 0.3s ease, transform 0.2s ease',
+  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+  textDecoration: 'none',
+  display: 'inline-block',
+  textAlign: 'center',
 };
 
 function CasosList() {
@@ -19,6 +47,7 @@ function CasosList() {
   const [casos, setCasos] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [showCompleted, setShowCompleted] = useState(true);
 
   useEffect(() => {
     const fetchCasos = async () => {
@@ -35,44 +64,75 @@ function CasosList() {
     fetchCasos();
   }, []);
 
+  const filteredCasos = casos.filter(caso => showCompleted || caso.status !== 'completado');
+
   return (
     <div style={listStyle}>
-      <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <h3>Mis Casos Asignados</h3>
-        <div>
-          <span>Técnico: {user?.nombre}</span>
-          <button onClick={logout} style={{ marginLeft: '10px' }}>Salir</button>
+      <header style={headerStyles}>
+        <h1 style={{ fontSize: '26px', fontWeight: 'bold', color: '#1E293B' }}>Mis Casos Asignados</h1>
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <label style={{ marginRight: '20px', color: '#475569', display: 'flex', alignItems: 'center' }}>
+            <input
+              type="checkbox"
+              checked={showCompleted}
+              onChange={() => setShowCompleted(!showCompleted)}
+              style={{ marginRight: '8px' }}
+            />
+            Mostrar Completados
+          </label>
+          <span style={{ color: '#475569', marginRight: '20px' }}>
+            Técnico: <strong>{user?.nombre}</strong>
+          </span>
+          <button onClick={logout} style={{ ...actionButtonStyles, backgroundColor: '#F1F5F9', color: '#1E293B' }}>
+            Salir
+          </button>
         </div>
       </header>
-      <hr />
+
       {isLoading && <p>Cargando casos...</p>}
       {error && <p style={{ color: 'red' }}>{error}</p>}
 
       {!isLoading && !error && (
         <div>
-          {casos.length === 0 ? (
-            <p>No tienes casos asignados.</p>
+          {filteredCasos.length === 0 ? (
+            <div style={cardStyle}><p>No hay casos que coincidan con el filtro.</p></div>
           ) : (
-            casos.map(caso => (
-              <div key={caso.id} style={casoStyle}>
-                <h4>Cliente: {caso.cliente_nombre}</h4>
-                <p>Dirección: {caso.cliente_direccion}</p>
-                <a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(caso.cliente_direccion)}`} target="_blank" rel="noopener noreferrer">
-                  <button style={{ background: '#4285F4', color: 'white', border: 'none', padding: '8px 12px', cursor: 'pointer' }}>
-                    Navegar a
-                  </button>
-                </a>
-                <p>Estado: {caso.status}</p>
+            filteredCasos.map(caso => (
+              <div key={caso.id} style={cardStyle}>
+                <h3 style={{ fontSize: '20px', color: '#10213F', marginBottom: '12px' }}>
+                  Cliente: {caso.cliente_nombre}
+                </h3>
+                <p style={{ color: '#475569', marginBottom: '8px' }}>
+                  <strong>Dirección:</strong> {caso.cliente_direccion}
+                </p>
+                <p style={{ color: '#475569', marginBottom: '20px' }}>
+                  <strong>Estado:</strong> <span style={{ fontWeight: '600', color: caso.status === 'completado' ? '#16A34A' : '#F59E0B' }}>
+                    {caso.status}
+                  </span>
+                </p>
 
-                {/* 2. Reemplazar el botón con un Link */}
-                <Link to={`/revision/${caso.id}`}>
-                  <button
-                    style={{ background: 'green', color: 'white', border: 'none', padding: '8px 12px', marginLeft: '10px' }}
-                    disabled={caso.status === 'completado'}
+                <div style={{ display: 'flex', gap: '12px' }}>
+                  <a
+                    href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(caso.cliente_direccion)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{...actionButtonStyles, backgroundColor: '#3B82F6', color: 'white'}}
                   >
-                    {caso.status === 'completado' ? 'Revisión Completada' : 'Iniciar Revisión'}
-                  </button>
-                </Link>
+                    Navegar a Dirección
+                  </a>
+                  <Link to={`/revision/${caso.id}`} style={{ textDecoration: 'none' }}>
+                    <button
+                      style={{
+                        ...actionButtonStyles,
+                        backgroundColor: caso.status === 'completado' ? '#D1D5DB' : '#10B981',
+                        color: 'white'
+                      }}
+                      disabled={caso.status === 'completado'}
+                    >
+                      {caso.status === 'completado' ? 'Revisión Completada' : 'Iniciar Revisión'}
+                    </button>
+                  </Link>
+                </div>
               </div>
             ))
           )}

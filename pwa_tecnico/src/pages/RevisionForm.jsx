@@ -41,7 +41,8 @@ function RevisionForm() {
   const [currentStep, setCurrentStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState(null);
-  const sigPadRef = useRef(null); // Ref para el lienzo
+  const [submitSuccess, setSubmitSuccess] = useState(false);
+  const sigPadRef = useRef(null);
 
   const [formData, setFormData] = useState({
     caso_id: parseInt(casoId),
@@ -142,29 +143,25 @@ function RevisionForm() {
 
     try {
       const response = await api.post('/revisiones', payload);
-      console.log('Respuesta de la API:', response.data);
-      alert(`¡Revisión ${response.data.revision_id} enviada exitosamente!`);
-      navigate('/casos');
+      setSubmitSuccess(true);
+      setTimeout(() => navigate('/casos'), 2500);
     } catch (err) {
       console.error('Error al enviar la revisión:', err);
-      setSubmitError('Error al enviar la revisión. Revisa la consola (F12).');
+      setSubmitError('Error al enviar la revisión. Intenta de nuevo.');
+    } finally {
       setIsSubmitting(false);
     }
   };
 
-  const esBifasico = formData.tipo_servicio === '2F+Neutro';
-  const esTrifasico = formData.tipo_servicio === 'Trifásico';
-  const esBifasicoConPaneles = formData.tipo_servicio === '2F+N con Paneles';
-  const tienePaneles = formData.tipo_servicio.includes('Paneles');
+  const { tipo_servicio } = formData;
+  const esBifasico = tipo_servicio === '2F+Neutro';
+  const esTrifasico = tipo_servicio === 'Trifásico';
+  const esBifasicoConPaneles = tipo_servicio === '2F+N con Paneles';
+  const esTrifasicoConPaneles = tipo_servicio === 'Trifásico con Paneles';
+  const tienePaneles = tipo_servicio.includes('Paneles');
 
   return (
     <div style={{ padding: '20px' }}>
-      {isSubmitting && (
-        <div style={overlayStyle}>
-          <div style={spinnerStyle}></div>
-          <p>Enviando reporte...</p>
-        </div>
-      )}
       <h2>Iniciando Revisión para el Caso #{casoId}</h2>
 
       <div style={tabContainerStyle}>
@@ -239,33 +236,62 @@ function RevisionForm() {
               <input type="number" name="voltaje_medido" id="voltaje_medido" value={formData.voltaje_medido} onChange={handleChange} step="0.1" />
             </div>
             <h4>Corriente de Red (Amperes)</h4>
+            {/* FASE 1: Siempre visible */}
             <div style={inputGroupStyle}>
               <label style={labelStyle} htmlFor="corriente_red_f1">Corriente Red F1</label>
               <input type="number" name="corriente_red_f1" id="corriente_red_f1" value={formData.corriente_red_f1} onChange={handleChange} step="0.1" />
             </div>
-            {(esBifasico || esTrifasico || tienePaneles) && (
+
+            {/* FASE 2: Visible para Bifásico, Trifásico y sus variantes con paneles */}
+            {(esBifasico || esTrifasico || esBifasicoConPaneles || esTrifasicoConPaneles) && (
               <div style={inputGroupStyle}>
                 <label style={labelStyle} htmlFor="corriente_red_f2">Corriente Red F2</label>
                 <input type="number" name="corriente_red_f2" id="corriente_red_f2" value={formData.corriente_red_f2} onChange={handleChange} step="0.1" />
               </div>
             )}
-            {(esTrifasico || tienePaneles) && (
+
+            {/* FASE 3: Visible solo para Trifásico y Trifásico con paneles */}
+            {(esTrifasico || esTrifasicoConPaneles) && (
               <div style={inputGroupStyle}>
                 <label style={labelStyle} htmlFor="corriente_red_f3">Corriente Red F3</label>
                 <input type="number" name="corriente_red_f3" id="corriente_red_f3" value={formData.corriente_red_f3} onChange={handleChange} step="0.1" />
               </div>
             )}
-            <div style={inputGroupStyle}>
-              <label style={labelStyle} htmlFor="corriente_red_n">Corriente Red Neutro</label>
-              <input type="number" name="corriente_red_n" id="corriente_red_n" value={formData.corriente_red_n} onChange={handleChange} step="0.1" />
-            </div>
+
+            {/* NEUTRO: Visible para Monofásico y Bifásico y sus variantes con paneles */}
+            {(tipo_servicio === 'Monofásico' || esBifasico || esBifasicoConPaneles) && (
+              <div style={inputGroupStyle}>
+                <label style={labelStyle} htmlFor="corriente_red_n">Corriente Red Neutro</label>
+                <input type="number" name="corriente_red_n" id="corriente_red_n" value={formData.corriente_red_n} onChange={handleChange} step="0.1" />
+              </div>
+            )}
+
             {tienePaneles && (
               <div style={{background: '#e8f5e9', padding: '10px', marginTop: '15px'}}>
-                <h4>Mediciones de Paneles Solares</h4>
+                <h4>Mediciones de Paneles Solares (Corriente)</h4>
+                {/* Panel F1: Visible si hay paneles */}
                 <div style={inputGroupStyle}>
                   <label style={labelStyle} htmlFor="corriente_paneles_f1">Corriente Paneles F1</label>
                   <input type="number" name="corriente_paneles_f1" id="corriente_paneles_f1" value={formData.corriente_paneles_f1} onChange={handleChange} step="0.1" />
                 </div>
+
+                {/* Panel F2: Visible para 2F+N con Paneles y Trifásico con Paneles */}
+                {(esBifasicoConPaneles || esTrifasicoConPaneles) && (
+                   <div style={inputGroupStyle}>
+                    <label style={labelStyle} htmlFor="corriente_paneles_f2">Corriente Paneles F2</label>
+                    <input type="number" name="corriente_paneles_f2" id="corriente_paneles_f2" value={formData.corriente_paneles_f2} onChange={handleChange} step="0.1" />
+                  </div>
+                )}
+
+                {/* Panel F3: Visible solo para Trifásico con Paneles */}
+                {esTrifasicoConPaneles && (
+                   <div style={inputGroupStyle}>
+                    <label style={labelStyle} htmlFor="corriente_paneles_f3">Corriente Paneles F3</label>
+                    <input type="number" name="corriente_paneles_f3" id="corriente_paneles_f3" value={formData.corriente_paneles_f3} onChange={handleChange} step="0.1" />
+                  </div>
+                )}
+
+                <h4>Datos Generales de Paneles</h4>
                 <div style={inputGroupStyle}>
                   <label style={labelStyle} htmlFor="cantidad_paneles">Cantidad de Paneles</label>
                   <input type="number" name="cantidad_paneles" id="cantidad_paneles" value={formData.cantidad_paneles} onChange={handleChange} step="1" />
@@ -370,10 +396,20 @@ function RevisionForm() {
             {submitError && <p style={{ color: 'red' }}>{submitError}</p>}
             <button 
               onClick={handleSubmit} 
-              style={{ marginTop: '20px', background: 'green', color: 'white', padding: '15px', fontSize: '1.2em', width: '100%' }}
-              disabled={isSubmitting}
+              style={{
+                marginTop: '20px',
+                backgroundColor: submitSuccess ? '#28a745' : (isSubmitting ? '#ccc' : '#007bff'),
+                color: 'white',
+                padding: '15px',
+                fontSize: '1.2em',
+                width: '100%',
+                border: 'none',
+                borderRadius: '5px',
+                cursor: isSubmitting || submitSuccess ? 'default' : 'pointer'
+              }}
+              disabled={isSubmitting || submitSuccess}
             >
-              {isSubmitting ? 'Enviando...' : 'Generar y Enviar Reporte'}
+              {isSubmitting ? 'Enviando...' : (submitSuccess ? '¡Reporte Enviado con Éxito!' : 'Generar y Enviar Reporte')}
             </button>
           </div>
         )}

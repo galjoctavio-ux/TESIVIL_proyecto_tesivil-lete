@@ -31,14 +31,29 @@ export const enviarReportePorEmail = async (clienteEmail, clienteNombre, pdfUrl)
     const { data, error } = await resend.emails.send({
       from: `Reportes Tesivil <${fromEmail}>`,
       to: [clienteEmail],
-      subject: 'Tu Reporte de Diagnóstico Eléctrico está listo',
+      subject: 'Reporte de Diagnóstico Eléctrico de LETE listo',
       html: `
-        Hola ${clienteNombre},<br><br>
-        Gracias por utilizar nuestros servicios de "Luz en tu Espacio".<br>
-        Adjuntamos tu reporte de diagnóstico detallado.<br><br>
-        Puedes verlo o descargarlo aquí: <a href="${pdfUrl}">Ver Reporte PDF</a><br><br>
-        Atentamente,<br>
-        El equipo de Tesivil
+        <div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; max-width: 600px; margin: 20px auto; background-color: #ffffff; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden;">
+          <div style="background-color: #10213f; padding: 20px 30px; text-align: center;">
+            <img src="https://www.tesivil.com/logo_LETE.png" alt="LETE Logo" style="max-width: 150px;">
+          </div>
+          <div style="padding: 30px; color: #333333; line-height: 1.6;">
+            <h1 style="color: #10213f; font-size: 24px; margin-bottom: 20px;">Hola, ${clienteNombre},</h1>
+            <p style="font-size: 16px;">Gracias por confiar en <strong>Luz en tu Espacio (LETE)</strong> para realizar el diagnóstico de tu instalación eléctrica.</p>
+            <p style="font-size: 16px;">Hemos concluido la revisión y tu reporte detallado ya está disponible. En él encontrarás nuestras observaciones, mediciones clave y recomendaciones para optimizar tu consumo y seguridad.</p>
+            <div style="text-align: center; margin: 30px 0;">
+              <a href="${pdfUrl}" style="background-color: #10213f; color: #ffffff; padding: 14px 28px; text-decoration: none; border-radius: 6px; font-weight: bold; font-size: 16px;">
+                Ver mi Reporte PDF
+              </a>
+            </div>
+            <p style="font-size: 16px;">Si tienes alguna pregunta sobre los resultados, no dudes en contactarnos.</p>
+            <p style="font-size: 16px; margin-top: 25px;">Atentamente,<br>El equipo de <strong>LETE</strong></p>
+          </div>
+          <div style="background-color: #f8f8f8; padding: 20px 30px; text-align: center; color: #888888; font-size: 12px;">
+            <p>Este es un correo electrónico automatizado. Por favor, no respondas directamente a este mensaje.</p>
+            <p>&copy; ${new Date().getFullYear()} LETE | Todos los derechos reservados.</p>
+          </div>
+        </div>
       `,
       // Nota: Resend no adjunta la URL directamente,
       // la ponemos como un enlace en el HTML.

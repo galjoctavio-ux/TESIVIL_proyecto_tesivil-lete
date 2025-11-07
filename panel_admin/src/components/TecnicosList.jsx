@@ -1,24 +1,43 @@
 import React, { useState, useEffect } from 'react';
 import api from '../apiService';
 
-// (Reutilizamos los mismos nombres de estilos)
 const tableStyle = {
   width: '100%',
-  borderCollapse: 'collapse',
+  borderCollapse: 'separate',
+  borderSpacing: '0 12px',
   marginTop: '20px',
 };
+
 const thStyle = {
-  border: '1px solid #ddd',
-  padding: '8px',
-  backgroundColor: '#f2f2f2',
+  padding: '12px 16px',
+  backgroundColor: '#F8FAFC',
+  color: '#64748B',
   textAlign: 'left',
-};
-const tdStyle = {
-  border: '1px solid #ddd',
-  padding: '8px',
+  textTransform: 'uppercase',
+  fontSize: '12px',
+  fontWeight: '600',
+  borderBottom: '2px solid #E2E8F0',
 };
 
-function TecnicosList() {
+const tdStyle = {
+  padding: '16px',
+  borderBottom: '1px solid #E2E8F0',
+  color: '#1E293B',
+};
+
+const actionButtonStyles = {
+  border: '1px solid #CBD5E1',
+  backgroundColor: 'transparent',
+  color: '#334155',
+  borderRadius: '6px',
+  padding: '6px 12px',
+  cursor: 'pointer',
+  marginRight: '8px',
+  fontSize: '14px',
+  transition: 'background-color 0.2s, color 0.2s',
+};
+
+function TecnicosList({ onTecnicoActualizado }) {
   const [tecnicos, setTecnicos] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -28,7 +47,6 @@ function TecnicosList() {
       setIsLoading(true);
       setError(null);
       try {
-        // Llama al endpoint de técnicos
         const response = await api.get('/usuarios/tecnicos');
         setTecnicos(response.data);
       } catch (err) {
@@ -46,6 +64,7 @@ function TecnicosList() {
       try {
         await api.delete(`/usuarios/tecnicos/${tecnicoId}`);
         setTecnicos(tecnicos.filter(t => t.id !== tecnicoId));
+        if(onTecnicoActualizado) onTecnicoActualizado();
       } catch (err) {
         console.error('Error al eliminar el técnico:', err);
         setError('No se pudo eliminar el técnico.');
@@ -57,8 +76,7 @@ function TecnicosList() {
   if (error) { return <div style={{ color: 'red' }}>{error}</div>; }
 
   return (
-    <div style={{marginTop: '40px'}}>
-      <h3>Gestión de Técnicos</h3>
+    <div>
       <table style={tableStyle}>
         <thead>
           <tr>
@@ -70,16 +88,29 @@ function TecnicosList() {
         </thead>
         <tbody>
           {tecnicos.length === 0 ? (
-            <tr><td colSpan="4" style={tdStyle}>No hay técnicos registrados.</td></tr>
+            <tr><td colSpan="4" style={{ ...tdStyle, textAlign: 'center' }}>No hay técnicos registrados.</td></tr>
           ) : (
             tecnicos.map(tecnico => (
-              <tr key={tecnico.id}>
+              <tr key={tecnico.id} style={{ backgroundColor: '#FFFFFF', boxShadow: '0 2px 4px rgba(0,0,0,0.05)' }}>
                 <td style={tdStyle}>{tecnico.id.substring(0, 8)}...</td>
                 <td style={tdStyle}>{tecnico.nombre}</td>
                 <td style={tdStyle}>{tecnico.email}</td>
                 <td style={tdStyle}>
-                  <button onClick={() => alert('Función no implementada')}>Editar</button>
-                  <button onClick={() => handleDelete(tecnico.id)}>Borrar</button>
+                  <button
+                    style={actionButtonStyles}
+                    onMouseOver={e => e.currentTarget.style.backgroundColor = '#F1F5F9'}
+                    onMouseOut={e => e.currentTarget.style.backgroundColor = 'transparent'}
+                  >
+                    Editar
+                  </button>
+                  <button
+                    onClick={() => handleDelete(tecnico.id)}
+                    style={{...actionButtonStyles, color: '#DC2626', borderColor: '#F87171'}}
+                    onMouseOver={e => { e.currentTarget.style.backgroundColor = '#FEE2E2'; e.currentTarget.style.color = '#991B1B'; }}
+                    onMouseOut={e => { e.currentTarget.style.backgroundColor = 'transparent'; e.currentTarget.style.color = '#DC2626'; }}
+                  >
+                    Borrar
+                  </button>
                 </td>
               </tr>
             ))
