@@ -4,18 +4,38 @@ import AsignarCasoModal from './AsignarCasoModal';
 
 const tableStyle = {
   width: '100%',
-  borderCollapse: 'collapse',
+  borderCollapse: 'separate',
+  borderSpacing: '0 12px',
   marginTop: '20px',
 };
+
 const thStyle = {
-  border: '1px solid #ddd',
-  padding: '8px',
-  backgroundColor: '#f2f2f2',
+  padding: '12px 16px',
+  backgroundColor: '#F8FAFC',
+  color: '#64748B',
   textAlign: 'left',
+  textTransform: 'uppercase',
+  fontSize: '12px',
+  fontWeight: '600',
+  borderBottom: '2px solid #E2E8F0',
 };
+
 const tdStyle = {
-  border: '1px solid #ddd',
-  padding: '8px',
+  padding: '16px',
+  borderBottom: '1px solid #E2E8F0',
+  color: '#1E293B',
+};
+
+const actionButtonStyles = {
+  border: '1px solid #CBD5E1',
+  backgroundColor: 'transparent',
+  color: '#334155',
+  borderRadius: '6px',
+  padding: '6px 12px',
+  cursor: 'pointer',
+  marginRight: '8px',
+  fontSize: '14px',
+  transition: 'background-color 0.2s, color 0.2s',
 };
 
 function CasosList({ onDatosActualizados, onAgendarClick }) { // 1. Recibir 'onDatosActualizados'
@@ -86,7 +106,7 @@ function CasosList({ onDatosActualizados, onAgendarClick }) { // 1. Recibir 'onD
                   </button>
                   <button
                     onClick={() => onAgendarClick(caso)}
-                    disabled={caso.status !== 'pendiente_asignacion'}
+                    disabled={caso.status !== 'asignado'}
                   >
                     Agendar
                   </button>

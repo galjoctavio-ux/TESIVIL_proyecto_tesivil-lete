@@ -83,7 +83,7 @@ const getHtmlPlantilla = () => {
     <body>
       <div class="container">
         <div class="header">
-          <img src="${logoBase64}" alt="Luz en tu Espacio" />
+          <img src="https://www.tesivil.com/logo_LETE.png" alt="Luz en tu Espacio" />
           <h1>Reporte de Diagnóstico Eléctrico</h1>
         </div>
         <div class="section">
