@@ -47,7 +47,7 @@ function CasosList() {
   const [casos, setCasos] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [showCompleted, setShowCompleted] = useState(true);
+  const [showCompleted, setShowCompleted] = useState(false);
 
   useEffect(() => {
     const fetchCasos = async () => {
