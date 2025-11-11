@@ -1,9 +1,24 @@
 import { Router } from 'express';
 // IMPORTACIONES ACTUALIZADAS
 import { requireAuth, isAdmin, isTecnico } from '../middleware/auth.middleware.js';
-import { getCasos, createCaso, updateCaso } from '../controllers/casos.controller.js';
+
+// --- MODIFICACIÓN: Importar el nuevo controlador ---
+import { 
+  getCasos, 
+  createCaso, 
+  updateCaso, 
+  getCasoPublico // <-- AÑADIDO
+} from '../controllers/casos.controller.js';
 
 const router = Router();
+
+// --- NUEVA RUTA PÚBLICA PARA MAGIC LINK ---
+// (Sin authRequired, es pública pero segura por el token)
+router.get(
+  '/publico/:token', // Usamos el token como parámetro
+  getCasoPublico
+);
+// ------------------------------------------
 
 // RUTAS ACTUALIZADAS (Middleware por ruta)
 
